@@ -400,7 +400,10 @@ export default function HomeDashboard() {
       </header>
 
       {/* MAIN CONTENT AREA */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 lg:px-8 py-6 space-y-6 pb-28">
+      <main id="main-content" tabIndex={-1} className="flex-1 max-w-7xl w-full mx-auto px-4 lg:px-8 py-6 space-y-6 pb-28 focus:outline-none">
+        {/* Semantic Level 1 Heading for Screen Readers */}
+        <h1 className="sr-only">VayuMitra — Indian Urban Air Quality & Low-Emission Companion</h1>
+
         {/* 2. EVALUATOR QUICK-START BAR & SEARCH CONTROLS */}
         <section
           aria-label="Evaluator Presets and Context Controls"
@@ -409,21 +412,23 @@ export default function HomeDashboard() {
           {/* Quick-Start Scenario Buttons for Judges */}
           <div className="mb-5">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-bold uppercase tracking-wider text-teal-800 flex items-center gap-1.5">
+              <h2 className="text-xs font-bold uppercase tracking-wider text-teal-800 flex items-center gap-1.5">
                 <Zap className="w-3.5 h-3.5 text-[#0D9488]" />
                 {isHindi ? "त्वरित मूल्यांकन परिदृश्य (1-क्लिक परीक्षण)" : "Evaluator Quick-Start Presets (1-Click Test Scenarios)"}
-              </span>
+              </h2>
               <span className="text-[11px] text-slate-400 font-medium">PromptWars Challenge 06 Ready</span>
             </div>
 
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5" role="group" aria-label="Quick-start evaluator presets">
               {PRESET_SCENARIOS.map((preset) => {
                 const isSelected = activeCity === preset.city && profile === preset.profile;
                 return (
                   <button
                     key={preset.id}
                     onClick={() => handleSelectPreset(preset)}
-                    className={`px-3.5 py-2.5 rounded-2xl text-xs font-semibold text-left transition-all border flex items-center justify-between ${
+                    aria-pressed={isSelected}
+                    aria-label={`Select preset: ${preset.label}`}
+                    className={`px-3.5 py-2.5 rounded-2xl text-xs font-semibold text-left transition-all border flex items-center justify-between focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:outline-none ${
                       isSelected
                         ? "bg-teal-50 border-teal-500 text-teal-950 shadow-xs ring-1 ring-teal-500"
                         : "bg-slate-50/70 border-slate-200 text-slate-700 hover:bg-slate-100/80 hover:border-slate-300"
@@ -438,22 +443,24 @@ export default function HomeDashboard() {
           </div>
 
           {/* Interactive Search & Context Adjustments */}
-          <form onSubmit={handleSubmitSearch} className="space-y-4 pt-3 border-t border-slate-100">
+          <form onSubmit={handleSubmitSearch} className="space-y-4 pt-3 border-t border-slate-100" aria-label="City search and context adjustments">
             <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
               {/* City Input with prominent GPS button */}
               <div className="md:col-span-4">
-                <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">
+                <label htmlFor="city-search-input" className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">
                   {isHindi ? "भारतीय शहर" : "Indian City"}
                 </label>
                 <div className="flex gap-2 items-center">
                   <div className="relative flex-1">
                     <MapPin className={`w-4 h-4 absolute left-3.5 top-3 ${gpsCoords ? "text-teal-500" : "text-slate-400"}`} />
                     <input
+                      id="city-search-input"
                       type="text"
                       value={cityInput}
                       onChange={(e) => { setCityInput(e.target.value); setGpsCoords(null); }}
                       placeholder="Enter city (e.g., Delhi, Pune, Patna)"
-                      className={`w-full pl-9 pr-3 py-2 text-sm rounded-xl border bg-white focus:outline-none focus:ring-2 focus:ring-[#0D9488] font-medium ${gpsCoords ? "border-teal-400 ring-1 ring-teal-200" : "border-slate-200"}`}
+                      aria-label="Enter Indian city name"
+                      className={`w-full pl-9 pr-3 py-2 text-sm rounded-xl border bg-white focus:outline-none focus:ring-2 focus:ring-[#0D9488] font-medium focus-visible:ring-2 focus-visible:ring-teal-600 ${gpsCoords ? "border-teal-400 ring-1 ring-teal-200" : "border-slate-200"}`}
                     />
                   </div>
                   <button
@@ -461,7 +468,7 @@ export default function HomeDashboard() {
                     onClick={handleUseLocation}
                     disabled={locating || loadingAqi}
                     aria-label="Detect my current city using GPS"
-                    className={`shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl border font-bold text-xs transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm ${
+                    className={`shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl border font-bold text-xs transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:outline-none ${
                       gpsCoords
                         ? "border-teal-500 bg-teal-100 text-teal-900 ring-1 ring-teal-400"
                         : "border-teal-600/30 bg-teal-50 hover:bg-teal-100 text-teal-800"
@@ -486,7 +493,7 @@ export default function HomeDashboard() {
                   </button>
                 </div>
                 {gpsCoords && (
-                  <p className="mt-1 text-[10px] text-teal-700 font-medium flex items-center gap-1">
+                  <p className="mt-1 text-[10px] text-teal-700 font-medium flex items-center gap-1" role="status">
                     <span className="inline-block w-1.5 h-1.5 rounded-full bg-teal-500 animate-pulse" />
                     {isHindi ? "लाइव GPS निर्देशांक सक्रिय — फिर से विश्लेषण करें" : "Live GPS coordinates active — re-analyze to refresh"}
                   </p>
@@ -495,13 +502,15 @@ export default function HomeDashboard() {
 
               {/* Household Profile Selector */}
               <div className="md:col-span-4">
-                <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">
+                <label htmlFor="household-persona-select" className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">
                   {isHindi ? "परिवार / व्यक्तिगत प्रोफ़ाइल" : "Household Persona"}
                 </label>
                 <select
+                  id="household-persona-select"
                   value={profile}
                   onChange={(e) => setProfile(e.target.value as HouseholdProfile)}
-                  className="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-[#0D9488] font-medium text-slate-800"
+                  aria-label="Select household persona"
+                  className="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-[#0D9488] font-medium text-slate-800 focus-visible:ring-2 focus-visible:ring-teal-600"
                 >
                   <option value="family_with_kids">Family with Young Kids</option>
                   <option value="senior_asthma">Senior Citizens / Asthma-Sensitive</option>
@@ -515,7 +524,8 @@ export default function HomeDashboard() {
                 <button
                   type="submit"
                   disabled={loadingAqi || loadingAi}
-                  className="w-full mt-4 md:mt-0 py-2.5 px-4 rounded-xl bg-[#0D9488] hover:bg-[#0F766E] disabled:opacity-50 text-white font-bold text-sm flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
+                  aria-label={isHindi ? "वायु गुणवत्ता विश्लेषण और योजना" : "Analyze live air quality and generate plan"}
+                  className="w-full mt-4 md:mt-0 py-2.5 px-4 rounded-xl bg-[#0D9488] hover:bg-[#0F766E] disabled:opacity-50 text-white font-bold text-sm flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:outline-none"
                 >
                   {loadingAqi || loadingAi ? (
                     <RefreshCw className="w-4 h-4 animate-spin" />
@@ -528,7 +538,7 @@ export default function HomeDashboard() {
             </div>
 
             {/* Lifestyle Toggles Row */}
-            <div className="flex flex-wrap items-center gap-2.5 pt-1">
+            <div className="flex flex-wrap items-center gap-2.5 pt-1" role="group" aria-label="Lifestyle context toggles">
               <span className="text-xs font-semibold text-slate-500 flex items-center gap-1 mr-1">
                 <SlidersHorizontal className="w-3.5 h-3.5" />
                 {isHindi ? "जीवनशैली टॉगल:" : "Household Context:"}
@@ -538,7 +548,9 @@ export default function HomeDashboard() {
               <button
                 type="button"
                 onClick={() => setLifestyle((p) => ({ ...p, hasAirPurifier: !p.hasAirPurifier }))}
-                className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all border flex items-center gap-1.5 ${
+                aria-pressed={lifestyle.hasAirPurifier}
+                aria-label={lifestyle.hasAirPurifier ? "Air purifier enabled" : "Air purifier disabled"}
+                className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all border flex items-center gap-1.5 focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:outline-none ${
                   lifestyle.hasAirPurifier
                     ? "bg-teal-50 border-teal-300 text-teal-800"
                     : "bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100"
@@ -552,7 +564,9 @@ export default function HomeDashboard() {
               <button
                 type="button"
                 onClick={() => setLifestyle((p) => ({ ...p, commuteOver10km: !p.commuteOver10km }))}
-                className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all border flex items-center gap-1.5 ${
+                aria-pressed={lifestyle.commuteOver10km}
+                aria-label={lifestyle.commuteOver10km ? "Commute over 10 km enabled" : "Commute over 10 km disabled"}
+                className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all border flex items-center gap-1.5 focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:outline-none ${
                   lifestyle.commuteOver10km
                     ? "bg-teal-50 border-teal-300 text-teal-800"
                     : "bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100"
@@ -566,7 +580,9 @@ export default function HomeDashboard() {
               <button
                 type="button"
                 onClick={() => setLifestyle((p) => ({ ...p, gasStoveOrKitchenExhaust: !p.gasStoveOrKitchenExhaust }))}
-                className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all border flex items-center gap-1.5 ${
+                aria-pressed={lifestyle.gasStoveOrKitchenExhaust}
+                aria-label={lifestyle.gasStoveOrKitchenExhaust ? "Kitchen exhaust enabled" : "Kitchen exhaust disabled"}
+                className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all border flex items-center gap-1.5 focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:outline-none ${
                   lifestyle.gasStoveOrKitchenExhaust
                     ? "bg-teal-50 border-teal-300 text-teal-800"
                     : "bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100"
@@ -600,9 +616,9 @@ export default function HomeDashboard() {
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-2">
                     <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse" />
-                    <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                    <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500">
                       {isHindi ? "सत्यापित लाइव टेलीमेट्री" : "Real-Time Telemetry"}
-                    </span>
+                    </h2>
                   </div>
                   <span className="text-xs font-medium text-slate-500">
                     {liveAqi.resolvedCity}, {liveAqi.state || "India"}

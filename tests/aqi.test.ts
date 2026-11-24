@@ -206,6 +206,14 @@ describe("Geocoding & AQI Retrieval Resilience", () => {
     expect(typeof result.state).toBe("string");
     expect(result.state.length).toBeGreaterThan(0);
   });
+
+  it("utilizes 10-minute in-memory cache for repeated city lookups", async () => {
+    const firstCall = await fetchLiveAqi("Delhi");
+    const secondCall = await fetchLiveAqi("Delhi");
+
+    // The in-memory cache returns the exact same object reference
+    expect(secondCall).toBe(firstCall);
+  });
 });
 
 describe("Relatable Health Context & Exposure Simulator Calculations", () => {

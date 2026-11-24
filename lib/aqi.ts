@@ -304,7 +304,7 @@ export async function fetchLiveAqi(
     const cleanAirWindow = findBestCleanAirWindow(mockTimes, mockPm25);
     const hourlyForecast = buildHourlyForecast(mockTimes, mockPm25, mockPm10, cleanAirWindow);
 
-    return {
+    const fallbackResult: LiveAqiData = {
       city: isCoordsMode ? geo.name : cityName,
       resolvedCity: geo.name || cityName,
       state: geo.state || "India",
@@ -327,6 +327,13 @@ export async function fetchLiveAqi(
       hourly: hourlyForecast,
       cleanAirWindow,
     };
+
+    aqiCache.set(cacheKey, {
+      data: fallbackResult,
+      expiresAt: Date.now() + CACHE_TTL_MS,
+    });
+
+    return fallbackResult;
   } finally {
     clearTimeout(timeoutId);
   }

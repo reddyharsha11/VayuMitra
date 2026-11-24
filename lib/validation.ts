@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const RecommendRequestSchema = z.object({
-  city: z.string().min(1, "City is required"),
+  city: z.string().trim().min(1, "City is required").max(300, "City name cannot exceed 300 characters"),
   profile: z.enum([
     "family_with_kids",
     "senior_asthma",
@@ -17,9 +17,9 @@ export const RecommendRequestSchema = z.object({
   liveAqi: z
     .object({
       naqi: z.number(),
-      category: z.string(),
-      dominantPollutant: z.string(),
-      cleanAirWindow: z.string(),
+      category: z.string().max(50),
+      dominantPollutant: z.string().max(50),
+      cleanAirWindow: z.string().max(100),
       pm2_5: z.number(),
       pm10: z.number(),
     })
@@ -65,17 +65,17 @@ export const RecommendResponseSchema = z.object({
 export type RecommendResponse = z.infer<typeof RecommendResponseSchema>;
 
 export const ChatRequestSchema = z.object({
-  message: z.string().min(1, "Message cannot be empty"),
-  city: z.string().min(1),
+  message: z.string().trim().min(1, "Message cannot be empty").max(300, "Message cannot exceed 300 characters"),
+  city: z.string().trim().min(1).max(300, "City name cannot exceed 300 characters"),
   naqi: z.number(),
-  category: z.string(),
-  cleanAirWindow: z.string(),
-  profile: z.string(),
+  category: z.string().max(50),
+  cleanAirWindow: z.string().max(100),
+  profile: z.string().max(100),
   history: z
     .array(
       z.object({
         role: z.enum(["user", "assistant"]),
-        content: z.string(),
+        content: z.string().max(2000),
       })
     )
     .optional()

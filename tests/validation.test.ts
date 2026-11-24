@@ -201,5 +201,35 @@ describe("Validation Schemas", () => {
       const result = ChatRequestSchema.safeParse(invalidChat);
       expect(result.success).toBe(false);
     });
+
+    it("rejects message exceeding 300 characters", () => {
+      const longMessage = "a".repeat(301);
+      const invalidChat = {
+        message: longMessage,
+        city: "Delhi",
+        naqi: 280,
+        category: "Poor",
+        cleanAirWindow: "2:00 PM – 4:00 PM IST",
+        profile: "family_with_kids",
+      };
+
+      const result = ChatRequestSchema.safeParse(invalidChat);
+      expect(result.success).toBe(false);
+    });
+
+    it("rejects city name exceeding 300 characters", () => {
+      const longCity = "c".repeat(301);
+      const invalidChat = {
+        message: "Is it safe to go out?",
+        city: longCity,
+        naqi: 280,
+        category: "Poor",
+        cleanAirWindow: "2:00 PM – 4:00 PM IST",
+        profile: "family_with_kids",
+      };
+
+      const result = ChatRequestSchema.safeParse(invalidChat);
+      expect(result.success).toBe(false);
+    });
   });
 });

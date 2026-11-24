@@ -95,9 +95,9 @@ export function ActionPlanSection({
             </div>
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <span className="text-xs font-bold tracking-wide uppercase text-teal-800">
+                <h2 className="text-xs font-bold tracking-wide uppercase text-teal-800">
                   {isHindi ? "AI स्वास्थ्य और वायु परामर्श" : "VayuMitra Personalized Epidemiological Assessment"}
-                </span>
+                </h2>
                 <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-teal-100/70 text-teal-900 font-semibold">
                   Gemini 2.5 Flash
                 </span>
@@ -128,10 +128,14 @@ export function ActionPlanSection({
 
       {/* Navigation Pills */}
       <div className="flex items-center justify-between border-b border-slate-100 pb-4 mb-6 gap-2 overflow-x-auto">
-        <div className="flex gap-2">
+        <div className="flex gap-2" role="tablist" aria-label="Action plan category tabs">
           <button
+            id="tab-routine"
+            role="tab"
+            aria-selected={activeTab === "routine"}
+            aria-controls="panel-routine"
             onClick={() => setActiveTab("routine")}
-            className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all flex items-center gap-2 ${
+            className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all flex items-center gap-2 focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:outline-none ${
               activeTab === "routine"
                 ? "bg-slate-900 text-white shadow-sm"
                 : "bg-slate-100 text-slate-600 hover:bg-slate-200/70"
@@ -142,8 +146,12 @@ export function ActionPlanSection({
           </button>
 
           <button
+            id="tab-indoor"
+            role="tab"
+            aria-selected={activeTab === "indoor"}
+            aria-controls="panel-indoor"
             onClick={() => setActiveTab("indoor")}
-            className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all flex items-center gap-2 ${
+            className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all flex items-center gap-2 focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:outline-none ${
               activeTab === "indoor"
                 ? "bg-slate-900 text-white shadow-sm"
                 : "bg-slate-100 text-slate-600 hover:bg-slate-200/70"
@@ -157,8 +165,12 @@ export function ActionPlanSection({
           </button>
 
           <button
+            id="tab-alternatives"
+            role="tab"
+            aria-selected={activeTab === "alternatives"}
+            aria-controls="panel-alternatives"
             onClick={() => setActiveTab("alternatives")}
-            className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all flex items-center gap-2 ${
+            className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all flex items-center gap-2 focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:outline-none ${
               activeTab === "alternatives"
                 ? "bg-slate-900 text-white shadow-sm"
                 : "bg-slate-100 text-slate-600 hover:bg-slate-200/70"
@@ -176,7 +188,7 @@ export function ActionPlanSection({
 
       {/* PILLAR 1: Low-Emission Daily Routine */}
       {activeTab === "routine" && (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div id="panel-routine" role="tabpanel" aria-labelledby="tab-routine" className="grid grid-cols-1 md:grid-cols-3 gap-5">
           {/* Morning */}
           <div className="flex flex-col justify-between p-5 rounded-2xl bg-gradient-to-b from-amber-50/50 to-white border border-amber-200/80 shadow-sm hover:shadow-md transition-shadow">
             <div>
@@ -277,14 +289,24 @@ export function ActionPlanSection({
 
       {/* PILLAR 2: Indoor Air Quality (IAQ) Hacks */}
       {activeTab === "indoor" && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div id="panel-indoor" role="tabpanel" aria-labelledby="tab-indoor" className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {recommendation.indoorHacks.map((hack) => {
             const isChecked = !!checkedHacks[hack.id];
             return (
               <div
                 key={hack.id}
+                role="checkbox"
+                aria-checked={isChecked}
+                tabIndex={0}
+                aria-label={`${hack.title}: ${hack.action}`}
+                onKeyDown={(e) => {
+                  if (e.key === " " || e.key === "Enter") {
+                    e.preventDefault();
+                    toggleHack(hack.id);
+                  }
+                }}
                 onClick={() => toggleHack(hack.id)}
-                className={`p-5 rounded-2xl border transition-all cursor-pointer select-none flex items-start gap-4 ${
+                className={`p-5 rounded-2xl border transition-all cursor-pointer select-none flex items-start gap-4 focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:outline-none ${
                   isChecked
                     ? "bg-teal-50/50 border-teal-300 shadow-sm"
                     : "bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50/60 shadow-sm"
@@ -327,7 +349,7 @@ export function ActionPlanSection({
 
       {/* PILLAR 3: Sustainable Alternatives & Direct Impact */}
       {activeTab === "alternatives" && (
-        <div className="space-y-4">
+        <div id="panel-alternatives" role="tabpanel" aria-labelledby="tab-alternatives" className="space-y-4">
           {/* Interactive Exposure & Emission Impact Simulator */}
           <ImpactSimulator
             ambientPm25={liveAqi?.current?.pm2_5 ?? 65}

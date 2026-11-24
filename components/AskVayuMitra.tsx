@@ -63,6 +63,17 @@ export function AskVayuMitra({
     }
   }, [messages, loading, isOpen]);
 
+  // Keyboard accessibility: Escape closes drawer
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && isOpen) {
+        setIsOpen(false);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen]);
+
   const handleSend = async (queryText?: string) => {
     const textToSend = (queryText || input).trim();
     if (!textToSend || loading) return;
@@ -161,7 +172,8 @@ export function AskVayuMitra({
                     type="button"
                     onClick={handleClear}
                     title="Clear history"
-                    className="p-1 rounded-lg text-slate-500 hover:text-rose-600 hover:bg-rose-50 transition-colors text-[11px] font-semibold flex items-center gap-1 px-2"
+                    aria-label="Clear chat history"
+                    className="p-1 rounded-lg text-slate-500 hover:text-rose-600 hover:bg-rose-50 transition-colors text-[11px] font-semibold flex items-center gap-1 px-2 focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:outline-none"
                   >
                     <RotateCcw className="w-3 h-3" />
                     <span>{isHindi ? "मिटाएं" : "Clear"}</span>
@@ -171,7 +183,8 @@ export function AskVayuMitra({
                   type="button"
                   onClick={() => setIsOpen(false)}
                   title="Minimize drawer"
-                  className="p-1 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-200/60 transition-colors text-[11px] font-semibold flex items-center gap-1 px-2"
+                  aria-label="Minimize chat drawer"
+                  className="p-1 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-200/60 transition-colors text-[11px] font-semibold flex items-center gap-1 px-2 focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:outline-none"
                 >
                   <ChevronDown className="w-3.5 h-3.5" />
                   <span>{isHindi ? "छोटा करें" : "Minimize"}</span>
@@ -251,7 +264,7 @@ export function AskVayuMitra({
         )}
 
         {/* 2. SUGGESTED PROMPT CHIPS (Visible above pill) */}
-        <div className="flex items-center gap-1.5 mb-2 overflow-x-auto pb-1 no-scrollbar">
+        <div className="flex items-center gap-1.5 mb-2 overflow-x-auto pb-1 no-scrollbar" role="group" aria-label="Suggested questions">
           <span className="text-[10px] font-bold uppercase tracking-wider text-slate-600 bg-white/70 backdrop-blur-md px-2 py-1 rounded-full border border-white/60 shadow-2xs flex items-center gap-1 shrink-0">
             <Sparkles className="w-3 h-3 text-teal-600" />
             <span className="hidden sm:inline">{isHindi ? "सुझाव:" : "Suggested:"}</span>
@@ -262,7 +275,8 @@ export function AskVayuMitra({
               type="button"
               onClick={() => handleSend(q)}
               disabled={loading}
-              className="text-[11px] px-3 py-1 rounded-full bg-white/85 hover:bg-teal-50 text-slate-700 hover:text-teal-900 border border-slate-200/80 hover:border-teal-400 transition-all font-semibold shadow-2xs truncate backdrop-blur-md shrink-0 cursor-pointer disabled:opacity-50"
+              aria-label={`Ask suggested question: ${q}`}
+              className="text-[11px] px-3 py-1 rounded-full bg-white/85 hover:bg-teal-50 text-slate-700 hover:text-teal-900 border border-slate-200/80 hover:border-teal-400 transition-all font-semibold shadow-2xs truncate backdrop-blur-md shrink-0 cursor-pointer disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:outline-none"
             >
               {q}
             </button>
@@ -276,6 +290,7 @@ export function AskVayuMitra({
             handleSend();
           }}
           className="bg-white/95 backdrop-blur-xl border border-teal-600/30 shadow-2xl rounded-2xl p-1.5 pl-3.5 flex items-center gap-2 ring-1 ring-black/5"
+          aria-label="Ask VayuMitra Form"
         >
           <div className="flex items-center gap-2 flex-1">
             <Bot className="w-4 h-4 text-teal-600 shrink-0" />
@@ -286,13 +301,15 @@ export function AskVayuMitra({
               onFocus={() => {
                 if (messages.length > 0) setIsOpen(true);
               }}
+              aria-expanded={isOpen}
+              aria-label="Ask VayuMitra a question"
               placeholder={
                 isHindi
                   ? `${city} की हवा, मास्क या वेंटिलेशन के बारे में पूछें...`
                   : `Ask VayuMitra about air quality, outdoor walks, or N95 masks in ${city}...`
               }
               disabled={loading}
-              className="w-full text-xs md:text-sm bg-transparent placeholder-slate-400 text-slate-800 focus:outline-none font-medium"
+              className="w-full text-xs md:text-sm bg-transparent placeholder-slate-400 text-slate-800 focus:outline-none font-medium focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:rounded-lg"
             />
           </div>
 
@@ -300,7 +317,7 @@ export function AskVayuMitra({
             type="submit"
             disabled={loading || !input.trim()}
             aria-label="Send query to VayuMitra"
-            className="px-3.5 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 disabled:opacity-50 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm transition-all shrink-0 cursor-pointer disabled:cursor-not-allowed"
+            className="px-3.5 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 disabled:opacity-50 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm transition-all shrink-0 cursor-pointer disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:outline-none"
           >
             {loading ? (
               <Loader2 className="w-3.5 h-3.5 animate-spin" />

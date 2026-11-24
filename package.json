@@ -6,8 +6,10 @@
     "dev": "next dev",
     "build": "next build && node scripts/postbuild.js",
     "start": "next start",
-    "lint": "next lint",
-    "test": "vitest run"
+    "lint": "tsc --noEmit",
+    "clean": "node -e \"try { require('fs').rmSync('.next', { recursive: true, force: true }) } catch(e){}\"",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@google/genai": "^3.6.1",

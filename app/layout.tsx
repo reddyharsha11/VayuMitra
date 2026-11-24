@@ -38,7 +38,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${jakarta.variable} ${mono.variable}`}>
-      <body className="min-h-screen bg-[#F8FAFC] text-[#0F172A] antialiased">
+      <body className="min-h-screen text-[#0F172A] antialiased">
+        {/* Accessible Skip to main content link */}
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-teal-700 focus:text-white focus:rounded-xl focus:shadow-xl focus:outline-none focus:ring-2 focus:ring-white font-bold text-xs"
+        >
+          Skip to main content
+        </a>
         {children}
       </body>
     </html>
